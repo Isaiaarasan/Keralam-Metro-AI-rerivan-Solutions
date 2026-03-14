@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const mongoose = require('mongoose');
+const { Station, PassengerData } = require('./models');
 const path = require('path');
 const fs = require('fs');
 const { RandomForestRegression } = require('ml-random-forest');
@@ -10,8 +11,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const dbPath = path.resolve(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kmrl';
+
+// Connect to MongoDB
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('Connected to MongoDB for API Routes'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Load the AI Model
 let demandModel;
@@ -25,32 +30,35 @@ if (fs.existsSync(modelPath)) {
 }
 
 // GET /stations
-app.get('/stations', (req, res) => {
-  db.all('SELECT * FROM stations', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
+app.get('/stations', async (req, res) => {
+  try {
+    const stations = await Station.find({});
+    // Map _id to id or just return them (Mongoose returns _id by default, but also our station_id field)
+    res.json(stations);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET /passenger-data
-app.get('/passenger-data', (req, res) => {
-  const limit = req.query.limit || 100;
-  db.all('SELECT * FROM passenger_data ORDER BY date DESC, hour DESC LIMIT ?', [limit], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
+app.get('/passenger-data', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const data = await PassengerData.find({}).sort({ date: -1, hour: -1 }).limit(limit);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// GET /predict-demand
-// We use GET instead of POST for easier fetching, allowing ?station_id=1&hour=8 etc, or we can use POST as intended.
-// POST /predict-demand payload: { station_id, hour, day_of_week, weekend_flag }
+// POST /predict-demand
 app.post('/predict-demand', (req, res) => {
   const { station_id, hour, day_of_week, weekend_flag } = req.body;
   
   if (!demandModel) return res.status(500).json({ error: "AI Model not loaded." });
   
   const predictions = demandModel.predict([[station_id, hour, day_of_week, weekend_flag]]);
-  const predictedValue = Math.max(0, Math.round(predictions[0])); // Can't be negative passenger count
+  const predictedValue = Math.max(0, Math.round(predictions[0])); 
   
   res.json({
     station_id,
@@ -61,7 +69,7 @@ app.post('/predict-demand', (req, res) => {
 
 // Utility POST for batch predictions for the dashboard charts
 app.post('/predict-demand-batch', (req, res) => {
-  const { requests } = req.body; // array of { station_id, hour, day_of_week, weekend_flag }
+  const { requests } = req.body; 
   
   if (!demandModel) return res.status(500).json({ error: "AI Model not loaded." });
 
@@ -77,7 +85,6 @@ app.post('/predict-demand-batch', (req, res) => {
 });
 
 // GET /schedule
-// Example Query: ?predicted_passengers=850
 app.get('/schedule', (req, res) => {
   const predicted_passengers = parseInt(req.query.predicted_passengers);
   if (isNaN(predicted_passengers)) {
