@@ -95,6 +95,42 @@ app.get('/schedule', (req, res) => {
   res.json(schedulePlan);
 });
 
+// POST /resource-allocation
+app.post('/resource-allocation', (req, res) => {
+  const { requests } = req.body; // array of { station_id, hour, day_of_week, weekend_flag }
+  
+  if (!demandModel) return res.status(500).json({ error: "AI Model not loaded." });
+
+  const X = requests.map(r => [r.station_id, r.hour, r.day_of_week, r.weekend_flag]);
+  const predictions = demandModel.predict(X);
+
+  const results = requests.map((r, i) => {
+    const demand = Math.max(0, Math.round(predictions[i]));
+    
+    // AI Staffing Rules:
+    // Base 1 security & 1 ticketing staff per station.
+    // +1 ticketing staff per 150 passengers/hr
+    // +1 security staff per 300 passengers/hr
+    const ticketing_staff = 1 + Math.floor(demand / 150);
+    const security_staff = 1 + Math.floor(demand / 300);
+    const maintenance_staff = demand > 600 ? 2 : 1; // High traffic needs more cleaning/maint
+
+    return {
+      station_id: r.station_id,
+      hour: r.hour,
+      predicted_demand: demand,
+      staff_allocation: {
+        ticketing: ticketing_staff,
+        security: security_staff,
+        maintenance: maintenance_staff,
+        total_staff: ticketing_staff + security_staff + maintenance_staff
+      }
+    };
+  });
+
+  res.json(results);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`KMRL Backend API running on http://localhost:${PORT}`);
