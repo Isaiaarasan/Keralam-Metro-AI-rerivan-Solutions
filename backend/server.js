@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kmrl';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/metro_ai';
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
@@ -133,5 +133,5 @@ app.post('/resource-allocation', (req, res) => {
 
 const PORT = 3001;
 app.listen(PORT, () => {
-  console.log(`KMRL Backend API running on http://localhost:${PORT}`);
+  console.log(`Metro Backend API running on http://localhost:${PORT}`);
 });

@@ -4,7 +4,7 @@ const { RandomForestRegression } = require('ml-random-forest');
 const fs = require('fs');
 const path = require('path');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kmrl';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/metro_ai';
 
 async function trainModel() {
   try {

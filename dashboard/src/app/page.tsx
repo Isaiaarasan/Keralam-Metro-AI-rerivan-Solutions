@@ -8,8 +8,11 @@ import PredictionsTab from '@/components/dashboard/PredictionsTab';
 import SchedulingTab from '@/components/dashboard/SchedulingTab';
 import StationsTab from '@/components/dashboard/StationsTab';
 
+import ResourceTab from '@/components/dashboard/ResourceTab';
+import { TabType } from '@/components/layout/Sidebar';
+
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   return (
     <div className="flex h-screen text-slate-800 font-sans overflow-hidden bg-transparent">
@@ -19,10 +22,11 @@ export default function Dashboard() {
         <Header activeTab={activeTab} />
         
         <div className="flex-1 pb-10">
-          {activeTab === 'dashboard' && <OverviewTab />}
+          {activeTab === 'overview' && <OverviewTab />}
           {activeTab === 'predictions' && <PredictionsTab />}
           {activeTab === 'scheduling' && <SchedulingTab />}
           {activeTab === 'stations' && <StationsTab />}
+          {activeTab === 'resources' && <ResourceTab />}
         </div>
       </main>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { LayoutDashboard, TrendingUp, Calendar, MapPin, Settings as SettingsIcon, Train, Users } from 'lucide-react';
-import { TabType } from './DashboardLayout';
+export type TabType = 'overview' | 'predictions' | 'scheduling' | 'stations' | 'resources';
 
 interface SidebarProps {
   activeTab: TabType;
@@ -28,7 +28,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <Train size={24} className="text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">KMRL AI</h1>
+          <h1 className="text-xl font-bold text-white tracking-tight">Metro AI</h1>
           <p className="text-[10px] text-indigo-200 tracking-wider uppercase font-semibold mt-0.5">Intelligent Scheduling</p>
         </div>
       </div>

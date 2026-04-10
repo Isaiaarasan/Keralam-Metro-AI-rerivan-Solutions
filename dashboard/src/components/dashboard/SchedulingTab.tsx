@@ -25,7 +25,7 @@ export default function SchedulingTab() {
       for(let hour of [8, 9, 10, 11, 12, 16, 17, 18, 19]) {
         // Aggregate passenger demand across top stations for this hour to feed into scheduler
         const hourData = predictions.find((p: any) => p.time === `${hour.toString().padStart(2,'0')}:00`);
-        const total_demand = hourData ? (hourData.aluva + hourData.edapally + hourData.mg_road) : 500;
+        const total_demand = hourData ? (hourData.station_a + hourData.station_b + hourData.station_c) : 500;
         
         const sched = await fetchSchedule(total_demand);
         newSchedule.push({

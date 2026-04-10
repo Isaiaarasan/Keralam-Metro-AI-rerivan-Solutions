@@ -6,11 +6,11 @@ import { fetchStations } from '@/lib/api';
 import { MapPin, TrendingUp, TrendingDown, Minus, X, Network, Activity, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export const STATIONS = [
-  { id: 'ALU', name: 'Aluva', status: 'normal', load: 85, trend: 'increasing' },
-  { id: 'EDA', name: 'Edapally', status: 'warning', load: 60, trend: 'stable' },
-  { id: 'MGR', name: 'MG Road', status: 'critical', load: 92, trend: 'increasing' },
-  { id: 'VYT', name: 'Vyttila', status: 'normal', load: 55, trend: 'decreasing' },
-  { id: 'KAL', name: 'Kaloor', status: 'normal', load: 45, trend: 'stable' }
+  { id: 'STA', name: 'Station Alpha', status: 'normal', load: 85, trend: 'increasing' },
+  { id: 'STB', name: 'Station Beta', status: 'warning', load: 60, trend: 'stable' },
+  { id: 'STC', name: 'Station Gamma', status: 'critical', load: 92, trend: 'increasing' },
+  { id: 'STD', name: 'Station Delta', status: 'normal', load: 55, trend: 'decreasing' },
+  { id: 'STE', name: 'Station Epsilon', status: 'normal', load: 45, trend: 'stable' }
 ];
 
 export default function StationsTab() {

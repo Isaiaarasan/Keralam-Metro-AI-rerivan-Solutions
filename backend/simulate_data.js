@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const { Station, PassengerData } = require('./models');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kmrl';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/metro_ai';
 
 const stations = [
-  { station_id: 1, station_name: 'Aluva', location: '10.1090, 76.3491', line: 'Blue' },
-  { station_id: 2, station_name: 'Edapally', location: '10.0261, 76.3073', line: 'Blue' },
-  { station_id: 3, station_name: 'MG Road', location: '9.9757, 76.2801', line: 'Blue' },
-  { station_id: 4, station_name: 'Vyttila', location: '9.9674, 76.3193', line: 'Blue' },
-  { station_id: 5, station_name: 'Kaloor', location: '9.9880, 76.2946', line: 'Blue' }
+  { station_id: 1, station_name: 'Station Alpha', location: '10.1090, 76.3491', line: 'Blue' },
+  { station_id: 2, station_name: 'Station Beta', location: '10.0261, 76.3073', line: 'Blue' },
+  { station_id: 3, station_name: 'Station Gamma', location: '9.9757, 76.2801', line: 'Blue' },
+  { station_id: 4, station_name: 'Station Delta', location: '9.9674, 76.3193', line: 'Blue' },
+  { station_id: 5, station_name: 'Station Epsilon', location: '9.9880, 76.2946', line: 'Blue' }
 ];
 
 async function seedDatabase() {
@@ -48,7 +48,7 @@ async function seedDatabase() {
           // Peak multipliers
           if (hour >= 8 && hour <= 10) base *= 3;
           if (hour >= 17 && hour <= 19) base *= 3.5;
-          if (station.station_name === 'Aluva' || station.station_name === 'MG Road') base *= 1.5;
+          if (station.station_name === 'Station Alpha' || station.station_name === 'Station Gamma') base *= 1.5;
           
           if (isWeekend) {
             if (hour >= 8 && hour <= 10) base *= 0.5;

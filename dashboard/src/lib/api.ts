@@ -29,11 +29,11 @@ export async function fetchPredictionsForToday() {
   const chartData = [];
   for(let hour=6; hour<=22; hour++) {
     const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-    const aluva = rawData.find((r: any) => r.hour === hour && r.station_id === 1)?.predicted_passengers || 0;
-    const edapally = rawData.find((r: any) => r.hour === hour && r.station_id === 2)?.predicted_passengers || 0;
-    const mg_road = rawData.find((r: any) => r.hour === hour && r.station_id === 3)?.predicted_passengers || 0;
+    const station_a = rawData.find((r: any) => r.hour === hour && r.station_id === 1)?.predicted_passengers || 0;
+    const station_b = rawData.find((r: any) => r.hour === hour && r.station_id === 2)?.predicted_passengers || 0;
+    const station_c = rawData.find((r: any) => r.hour === hour && r.station_id === 3)?.predicted_passengers || 0;
     
-    chartData.push({ time: timeStr, aluva, edapally, mg_road });
+    chartData.push({ time: timeStr, station_a, station_b, station_c });
   }
   return chartData;
 }

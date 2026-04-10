@@ -7,7 +7,7 @@ export default function Header({ activeTab }: { activeTab: string }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'AI Demand Model Retrained', type: 'info', time: '10m ago' },
-    { id: 2, text: 'Peak Surge Detected at Aluva', type: 'warning', time: '1h ago' }
+    { id: 2, text: 'Peak Surge Detected at Station Alpha', type: 'warning', time: '1h ago' }
   ]);
 
   const clearNotifications = () => {
@@ -19,10 +19,11 @@ export default function Header({ activeTab }: { activeTab: string }) {
     <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 glass-card p-6 rounded-2xl relative z-50">
       <div>
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500">
-          {activeTab === 'dashboard' && 'System Overview'}
+          {activeTab === 'overview' && 'System Overview'}
           {activeTab === 'predictions' && 'AI Demand Prediction'}
           {activeTab === 'scheduling' && 'Optimized Scheduling'}
           {activeTab === 'stations' && 'Station Status'}
+          {activeTab === 'resources' && 'Resource Planning'}
         </h2>
         <p className="text-slate-500 mt-1 font-medium">Real-time AI analysis & operational recommendations.</p>
       </div>

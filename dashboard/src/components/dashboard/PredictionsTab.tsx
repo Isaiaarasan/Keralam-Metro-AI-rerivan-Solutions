@@ -23,11 +23,11 @@ export default function PredictionsTab() {
     
     const scaledData = data.map((d: any) => ({
       ...d,
-      aluva: Math.floor(d.aluva * scaleFactor),
-      edapally: Math.floor(d.edapally * scaleFactor),
-      mg_road: Math.floor(d.mg_road * scaleFactor),
-      vyttila: Math.floor(d.vyttila * scaleFactor),
-      kaloor: Math.floor(d.kaloor * scaleFactor)
+      station_a: Math.floor(d.station_a * scaleFactor),
+      station_b: Math.floor(d.station_b * scaleFactor),
+      station_c: Math.floor(d.station_c * scaleFactor),
+      station_d: Math.floor(d.station_d * scaleFactor),
+      station_e: Math.floor(d.station_e * scaleFactor)
     }));
 
     setDemandData(scaledData);
@@ -81,7 +81,7 @@ export default function PredictionsTab() {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={demandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="colorAluva" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="colorStation Alpha" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                 </linearGradient>
@@ -98,8 +98,8 @@ export default function PredictionsTab() {
                 itemStyle={{fontWeight: 600}}
               />
               <Legend iconType="circle" wrapperStyle={{ paddingTop: '24px', fontWeight: 600, color: '#475569' }}/>
-              <Area type="monotone" dataKey="aluva" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorAluva)" name="Aluva Node" activeDot={{r: 6, strokeWidth: 0, fill: '#3b82f6'}} />
-              <Area type="monotone" dataKey="mg_road" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorMg)" name="MG Road Node" activeDot={{r: 6, strokeWidth: 0, fill: '#8b5cf6'}} />
+              <Area type="monotone" dataKey="station_a" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorStation Alpha)" name="Station Alpha Node" activeDot={{r: 6, strokeWidth: 0, fill: '#3b82f6'}} />
+              <Area type="monotone" dataKey="station_c" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorMg)" name="Station Gamma Node" activeDot={{r: 6, strokeWidth: 0, fill: '#8b5cf6'}} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

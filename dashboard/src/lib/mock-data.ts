@@ -1,19 +1,19 @@
 export const demandData = [
-  { time: '06:00', aluva: 120, edapally: 80, mg_road: 50 },
-  { time: '07:00', aluva: 350, edapally: 220, mg_road: 150 },
-  { time: '08:00', aluva: 850, edapally: 620, mg_road: 450 },
-  { time: '09:00', aluva: 920, edapally: 750, mg_road: 600 },
-  { time: '10:00', aluva: 500, edapally: 450, mg_road: 400 },
-  { time: '11:00', aluva: 300, edapally: 280, mg_road: 250 },
-  { time: '12:00', aluva: 250, edapally: 250, mg_road: 200 },
-  { time: '13:00', aluva: 280, edapally: 300, mg_road: 280 },
-  { time: '14:00', aluva: 290, edapally: 310, mg_road: 300 },
-  { time: '15:00', aluva: 350, edapally: 400, mg_road: 380 },
-  { time: '16:00', aluva: 500, edapally: 550, mg_road: 500 },
-  { time: '17:00', aluva: 850, edapally: 800, mg_road: 900 },
-  { time: '18:00', aluva: 950, edapally: 880, mg_road: 950 },
-  { time: '19:00', aluva: 600, edapally: 550, mg_road: 700 },
-  { time: '20:00', aluva: 300, edapally: 250, mg_road: 400 },
+  { time: '06:00', station_a: 120, station_b: 80, station_c: 50 },
+  { time: '07:00', station_a: 350, station_b: 220, station_c: 150 },
+  { time: '08:00', station_a: 850, station_b: 620, station_c: 450 },
+  { time: '09:00', station_a: 920, station_b: 750, station_c: 600 },
+  { time: '10:00', station_a: 500, station_b: 450, station_c: 400 },
+  { time: '11:00', station_a: 300, station_b: 280, station_c: 250 },
+  { time: '12:00', station_a: 250, station_b: 250, station_c: 200 },
+  { time: '13:00', station_a: 280, station_b: 300, station_c: 280 },
+  { time: '14:00', station_a: 290, station_b: 310, station_c: 300 },
+  { time: '15:00', station_a: 350, station_b: 400, station_c: 380 },
+  { time: '16:00', station_a: 500, station_b: 550, station_c: 500 },
+  { time: '17:00', station_a: 850, station_b: 800, station_c: 900 },
+  { time: '18:00', station_a: 950, station_b: 880, station_c: 950 },
+  { time: '19:00', station_a: 600, station_b: 550, station_c: 700 },
+  { time: '20:00', station_a: 300, station_b: 250, station_c: 400 },
 ];
 
 export const scheduleData = [
@@ -25,9 +25,9 @@ export const scheduleData = [
 ];
 
 export const stationStatus = [
-  { id: 1, name: 'Aluva', status: 'Crowded', load: 85, trend: 'increasing' },
-  { id: 2, name: 'Edapally', status: 'Normal', load: 60, trend: 'stable' },
-  { id: 3, name: 'MG Road', status: 'Highly Crowded', load: 92, trend: 'increasing' },
-  { id: 4, name: 'Vyttila', status: 'Normal', load: 55, trend: 'decreasing' },
-  { id: 5, name: 'Kaloor', status: 'Normal', load: 45, trend: 'stable' },
+  { id: 1, name: 'Station Alpha', status: 'Crowded', load: 85, trend: 'increasing' },
+  { id: 2, name: 'Station Beta', status: 'Normal', load: 60, trend: 'stable' },
+  { id: 3, name: 'Station Gamma', status: 'Highly Crowded', load: 92, trend: 'increasing' },
+  { id: 4, name: 'Station Delta', status: 'Normal', load: 55, trend: 'decreasing' },
+  { id: 5, name: 'Station Epsilon', status: 'Normal', load: 45, trend: 'stable' },
 ];

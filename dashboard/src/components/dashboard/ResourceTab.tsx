@@ -24,7 +24,7 @@ export default function ResourceTab() {
       const activeDate = new Date();
 
       // 2. Prepare payload for the new resource-allocation endpoint
-      const stationIds = ['ALU', 'EDA', 'MGR', 'VYT', 'KAL'];
+      const stationIds = ['STA', 'STB', 'STC', 'STD', 'STE'];
       const requests = stationIds.map(id => ({
         station_id: id,
         hour: 8,
@@ -77,7 +77,7 @@ export default function ResourceTab() {
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     const dateString = new Date().toISOString().split('T')[0];
-    link.setAttribute("download", `KMRL_Staffing_Plan_${dateString}.csv`);
+    link.setAttribute("download", `Metro_Staffing_Plan_${dateString}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

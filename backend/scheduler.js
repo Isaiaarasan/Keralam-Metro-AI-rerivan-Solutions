@@ -1,6 +1,6 @@
 /**
  * Scheduling Optimization Algorithm
- * Based on the KMRL Plan.md:
+ * Based on the Plan.md:
  * "required_trains = predicted_passengers / train_capacity"
  * "minimize waiting time, maximize train utilization, reduce overcrowding"
  */

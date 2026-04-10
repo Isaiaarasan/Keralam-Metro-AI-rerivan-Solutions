@@ -1,6 +1,6 @@
 # Complete Development Plan  
 ## Project: AI-Driven Train Induction Planning & Scheduling System  
-### Target Organization: Kochi Metro Rail Limited (KMRL)
+### Target Organization: Metro AI Rerivan Solutions
 
 ---
 
@@ -146,8 +146,8 @@ Output example:
 
 | Station | Time | Predicted Passengers |
 |--------|------|---------------------|
-| Aluva | 08:00 | 450 |
-| Edapally | 08:00 | 620 |
+| Station Alpha | 08:00 | 450 |
+| Station Beta | 08:00 | 620 |
 
 ---
 
