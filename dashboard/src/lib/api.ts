@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:3001';
+export const BASE_URL = 'http://127.0.0.1:3001';
 
 export async function fetchStations() {
   const res = await fetch(`${BASE_URL}/stations`);
@@ -6,6 +6,7 @@ export async function fetchStations() {
 }
 
 export async function fetchPredictionsForToday() {
+  const stations = await fetchStations();
   const reqs = [];
   const today = new Date();
   const day_of_week = today.getDay();
@@ -13,9 +14,9 @@ export async function fetchPredictionsForToday() {
   
   // Predict for hours 6 to 22 (operating hours)
   for(let hour=6; hour<=22; hour++) {
-    reqs.push({ station_id: 1, hour, day_of_week, weekend_flag });
-    reqs.push({ station_id: 2, hour, day_of_week, weekend_flag });
-    reqs.push({ station_id: 3, hour, day_of_week, weekend_flag });
+    for (const station of stations) {
+      reqs.push({ station_id: station.station_id, hour, day_of_week, weekend_flag });
+    }
   }
 
   const res = await fetch(`${BASE_URL}/predict-demand-batch`, {
@@ -29,11 +30,17 @@ export async function fetchPredictionsForToday() {
   const chartData = [];
   for(let hour=6; hour<=22; hour++) {
     const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-    const station_a = rawData.find((r: any) => r.hour === hour && r.station_id === 1)?.predicted_passengers || 0;
-    const station_b = rawData.find((r: any) => r.hour === hour && r.station_id === 2)?.predicted_passengers || 0;
-    const station_c = rawData.find((r: any) => r.hour === hour && r.station_id === 3)?.predicted_passengers || 0;
+    const hourEntry: any = { time: timeStr };
     
-    chartData.push({ time: timeStr, station_a, station_b, station_c });
+    stations.forEach((s: any) => {
+      const pred = rawData.find((r: any) => r.hour === hour && r.station_id === s.station_id);
+      // Create a slug like 'station_alpha' from 'Station Alpha'
+      const key = s.station_name.toLowerCase().replace(/\s+/g, '_');
+      hourEntry[key] = pred ? pred.predicted_passengers : 0;
+      hourEntry[`${key}_name`] = s.station_name; // Store full name for tooltips
+    });
+    
+    chartData.push(hourEntry);
   }
   return chartData;
 }
@@ -45,5 +52,10 @@ export async function fetchSchedule(predicted_passengers: number) {
 
 export async function fetchPassengerData() {
   const res = await fetch(`${BASE_URL}/passenger-data?limit=1000`);
+  return res.json();
+}
+
+export async function fetchSummary() {
+  const res = await fetch(`${BASE_URL}/summary`);
   return res.json();
 }

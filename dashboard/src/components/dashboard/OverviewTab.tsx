@@ -1,7 +1,26 @@
+import { useState, useEffect } from 'react';
 import { Users, Train, AlertTriangle, Activity, ArrowRight } from 'lucide-react';
-import { stationStatus } from '@/lib/mock-data';
+import { fetchSummary } from '@/lib/api';
 
 export default function OverviewTab() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSummary()
+      .then(setData)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Highlight Cards */}
@@ -16,7 +35,7 @@ export default function OverviewTab() {
             </span>
           </div>
           <h3 className="text-slate-500 text-sm font-semibold mb-1">Total Passengers (Today)</h3>
-          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">42,590</p>
+          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">{data.total_passengers.toLocaleString()}</p>
         </div>
 
         <div className="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300" style={{ animationDelay: '100ms' }}>
@@ -26,7 +45,7 @@ export default function OverviewTab() {
             </div>
           </div>
           <h3 className="text-slate-500 text-sm font-semibold mb-1">Active Trains</h3>
-          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">24 <span className="text-lg text-slate-400 font-medium tracking-normal">/ 28</span></p>
+          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">{data.active_trains} <span className="text-lg text-slate-400 font-medium tracking-normal">/ {data.total_trains}</span></p>
         </div>
 
         <div className="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300" style={{ animationDelay: '200ms' }}>
@@ -35,11 +54,13 @@ export default function OverviewTab() {
               <AlertTriangle className="text-white" size={24} />
             </div>
             <span className="flex items-center text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1.5 rounded-lg shadow-sm border border-orange-100">
-              Peak Hour
+              Real-time
             </span>
           </div>
-          <h3 className="text-slate-500 text-sm font-semibold mb-1">Current Status</h3>
-          <p className="text-2xl font-extrabold text-slate-800 tracking-tight">High Congestion</p>
+          <h3 className="text-slate-500 text-sm font-semibold mb-1">System Status</h3>
+          <p className="text-2xl font-extrabold text-slate-800 tracking-tight">
+            {data.congested_stations[0]?.load > 80 ? 'High Congestion' : 'Operational'}
+          </p>
         </div>
 
         <div className="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300" style={{ animationDelay: '300ms' }}>
@@ -49,7 +70,7 @@ export default function OverviewTab() {
             </div>
           </div>
           <h3 className="text-slate-500 text-sm font-semibold mb-1">AI Confidence Score</h3>
-          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">94.2%</p>
+          <p className="text-3xl font-extrabold text-slate-800 tracking-tight">{data.confidence_score}%</p>
         </div>
       </div>
 
@@ -62,7 +83,7 @@ export default function OverviewTab() {
             </button>
           </div>
           <div className="divide-y divide-slate-100 flex-1 overflow-auto bg-white/20">
-            {stationStatus.filter(s => s.load > 50).map((station) => (
+            {data.congested_stations.slice(0, 5).map((station: any) => (
               <div key={station.id} className="p-4 px-6 flex items-center justify-between hover:bg-white/60 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${station.load > 80 ? 'bg-red-500 shadow-red-500/50' : 'bg-orange-500 shadow-orange-500/50'}`}></div>

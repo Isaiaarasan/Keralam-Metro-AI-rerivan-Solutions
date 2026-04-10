@@ -21,14 +21,15 @@ export default function PredictionsTab() {
     
     const scaleFactor = filter === '30days' ? 28 : filter === '7days' ? 6.5 : 1;
     
-    const scaledData = data.map((d: any) => ({
-      ...d,
-      station_a: Math.floor(d.station_a * scaleFactor),
-      station_b: Math.floor(d.station_b * scaleFactor),
-      station_c: Math.floor(d.station_c * scaleFactor),
-      station_d: Math.floor(d.station_d * scaleFactor),
-      station_e: Math.floor(d.station_e * scaleFactor)
-    }));
+    const scaledData = data.map((d: any) => {
+      const newEntry = { ...d };
+      Object.keys(d).forEach(key => {
+        if (typeof d[key] === 'number') {
+          newEntry[key] = Math.floor(d[key] * scaleFactor);
+        }
+      });
+      return newEntry;
+    });
 
     setDemandData(scaledData);
     setLoading(false);
@@ -37,6 +38,13 @@ export default function PredictionsTab() {
   useEffect(() => {
     loadDataForFilter('today');
   }, []);
+
+  // Get keys for stations (keys that don't end in _name and aren't 'time')
+  const stationKeys = demandData.length > 0 
+    ? Object.keys(demandData[0]).filter(k => k !== 'time' && !k.endsWith('_name'))
+    : [];
+
+  const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
 
   return (
     <div className="glass-card rounded-2xl p-6 flex flex-col h-[calc(100vh-12rem)] min-h-[500px] animate-slide-up relative overflow-hidden">
@@ -81,14 +89,12 @@ export default function PredictionsTab() {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={demandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="colorStation Alpha" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorMg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                </linearGradient>
+                {stationKeys.map((key, i) => (
+                  <linearGradient key={`grad_${key}`} id={`color_${key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={colors[i % colors.length]} stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor={colors[i % colors.length]} stopOpacity={0}/>
+                  </linearGradient>
+                ))}
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(241, 245, 249, 0.4)" />
               <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 13, fontWeight: 500}} dy={10} />
@@ -96,10 +102,22 @@ export default function PredictionsTab() {
               <Tooltip 
                 contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', fontWeight: 'bold', color: '#1e293b' }}
                 itemStyle={{fontWeight: 600}}
+                formatter={(value: any, name: any, props: any) => [value, props.payload[`${name}_name`] || name]}
               />
               <Legend iconType="circle" wrapperStyle={{ paddingTop: '24px', fontWeight: 600, color: '#475569' }}/>
-              <Area type="monotone" dataKey="station_a" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorStation Alpha)" name="Station Alpha Node" activeDot={{r: 6, strokeWidth: 0, fill: '#3b82f6'}} />
-              <Area type="monotone" dataKey="station_c" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorMg)" name="Station Gamma Node" activeDot={{r: 6, strokeWidth: 0, fill: '#8b5cf6'}} />
+              {stationKeys.map((key, i) => (
+                <Area 
+                  key={key}
+                  type="monotone" 
+                  dataKey={key} 
+                  stroke={colors[i % colors.length]} 
+                  strokeWidth={3} 
+                  fillOpacity={1} 
+                  fill={`url(#color_${key})`} 
+                  name={key} 
+                  activeDot={{r: 6, strokeWidth: 0, fill: colors[i % colors.length]}} 
+                />
+              ))}
             </AreaChart>
           </ResponsiveContainer>
         </div>
