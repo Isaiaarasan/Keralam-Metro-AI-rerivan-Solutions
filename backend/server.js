@@ -154,34 +154,50 @@ app.get('/summary', async (req, res) => {
 
 // POST /resource-allocation
 app.post('/resource-allocation', (req, res) => {
-  const { requests } = req.body; 
-  
-  if (!demandModel) return res.status(500).json({ error: "AI Model not loaded." });
-
-  const X = requests.map(r => [r.station_id, r.hour, r.day_of_week, r.weekend_flag]);
-  const predictions = demandModel.predict(X);
-
-  const results = requests.map((r, i) => {
-    const demand = Math.max(0, Math.round(predictions[i]));
+  try {
+    const { requests } = req.body; 
     
-    const ticketing_staff = 1 + Math.floor(demand / 150);
-    const security_staff = 1 + Math.floor(demand / 300);
-    const maintenance_staff = demand > 600 ? 2 : 1;
+    if (!requests || !Array.isArray(requests)) {
+      return res.status(400).json({ error: "Invalid requests. Expected an array." });
+    }
 
-    return {
-      station_id: r.station_id,
-      hour: r.hour,
-      predicted_demand: demand,
-      staff_allocation: {
-        ticketing: ticketing_staff,
-        security: security_staff,
-        maintenance: maintenance_staff,
-        total_staff: ticketing_staff + security_staff + maintenance_staff
-      }
-    };
-  });
+    if (!demandModel) return res.status(500).json({ error: "AI Model not loaded." });
 
-  res.json(results);
+    // Ensure all inputs are numbers for the model
+    const X = requests.map(r => [
+      Number(r.station_id) || 1, // fallback to 1 if NaN
+      Number(r.hour), 
+      Number(r.day_of_week), 
+      Number(r.weekend_flag)
+    ]);
+    
+    const predictions = demandModel.predict(X);
+
+    const results = requests.map((r, i) => {
+      const demand = Math.max(0, Math.round(predictions[i]));
+      
+      const ticketing_staff = 1 + Math.floor(demand / 150);
+      const security_staff = 1 + Math.floor(demand / 300);
+      const maintenance_staff = demand > 600 ? 2 : 1;
+
+      return {
+        station_id: r.station_id,
+        hour: r.hour,
+        predicted_demand: demand,
+        staff_allocation: {
+          ticketing: ticketing_staff,
+          security: security_staff,
+          maintenance: maintenance_staff,
+          total_staff: ticketing_staff + security_staff + maintenance_staff
+        }
+      };
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error('Error in /resource-allocation:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/health', (req, res) => res.json({ status: 'healthy', timestamp: new Date() }));

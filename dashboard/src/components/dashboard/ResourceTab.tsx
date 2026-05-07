@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { fetchPredictionsForToday } from '@/lib/api';
+import { fetchPredictionsForToday, fetchStations, BASE_URL } from '@/lib/api';
 import { Users, Shield, MapPin, Search, ArrowRight, Download } from 'lucide-react';
-import { STATIONS } from './StationsTab';
 
 export default function ResourceTab() {
   const [allocationData, setAllocationData] = useState<any[]>([]);
@@ -11,30 +10,32 @@ export default function ResourceTab() {
 
   useEffect(() => {
     async function init() {
-      // 1. Fetch AI demand predictions for 8 AM
-      const predictions = await fetchPredictionsForToday();
-      const morningData = predictions.find((p: any) => p.time === '08:00');
-      
-      if (!morningData) {
-         setLoading(false);
-         return;
-      }
-
-      // Safe client-side date resolution
-      const activeDate = new Date();
-
-      // 2. Prepare payload for the new resource-allocation endpoint
-      const stationIds = ['STA', 'STB', 'STC', 'STD', 'STE'];
-      const requests = stationIds.map(id => ({
-        station_id: id,
-        hour: 8,
-        day_of_week: activeDate.getDay(),
-        weekend_flag: [0, 6].includes(activeDate.getDay()) ? 1 : 0
-      }));
-
-      // 3. Post to backend to get Staffing Numbers
       try {
-        const res = await fetch('http://localhost:3001/resource-allocation', {
+        // 1. Fetch Stations and AI demand predictions for 8 AM
+        const [stations, predictions] = await Promise.all([
+          fetchStations(),
+          fetchPredictionsForToday()
+        ]);
+
+        const morningData = predictions.find((p: any) => p.time === '08:00');
+        
+        if (!morningData) {
+           setLoading(false);
+           return;
+        }
+
+        const activeDate = new Date();
+
+        // 2. Prepare payload using real station numeric IDs
+        const requests = stations.map((s: any) => ({
+          station_id: s.station_id,
+          hour: 8,
+          day_of_week: activeDate.getDay(),
+          weekend_flag: [0, 6].includes(activeDate.getDay()) ? 1 : 0
+        }));
+
+        // 3. Post to backend to get Staffing Numbers
+        const res = await fetch(`${BASE_URL}/resource-allocation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ requests })
@@ -42,10 +43,13 @@ export default function ResourceTab() {
         const data = await res.json();
         
         // 4. Merge visual names
-        const mergedData = data.map((d: any) => ({
-          ...d,
-          name: STATIONS.find(s => s.id === d.station_id)?.name || d.station_id
-        }));
+        const mergedData = data.map((d: any) => {
+          const station = stations.find((s: any) => s.station_id == d.station_id);
+          return {
+            ...d,
+            name: station ? station.station_name : `Station ${d.station_id}`
+          };
+        });
 
         setAllocationData(mergedData);
       } catch (err) {
